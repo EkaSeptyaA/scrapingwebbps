@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Scraper Berita Topik Khusus</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f2f2f2;
+            padding: 40px;
+        }
+
+        h1 {
+            color: #003366;
+            margin-bottom: 30px;
+        }
+
+        form {
+            background-color: #fff;
+            padding: 25px;
+            border-left: 8px solid #FFCC00;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            border-radius: 8px;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin: 10px 0 5px;
+        }
+
+        .search-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .search-row input[type="text"] {
+            flex: 1;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+
+        .search-row button {
+            padding: 10px 15px;
+            background-color: #003366;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .search-row button img {
+            width: 16px;
+            height: 16px;
+            vertical-align: middle;
+        }
+
+
+        .select-row {
+            display: flex;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        select {
+            padding: 10px;
+            width: 100%;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            min-width: 150px;
+        }
+
+        .card {
+            background-color: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 5px solid #003366;
+            border-radius: 6px;
+            box-shadow: 0 1px 5px rgba(0,0,0,0.1);
+        }
+
+        .card h2 {
+            font-size: 18px;
+            color: #003366;
+            margin-bottom: 10px;
+        }
+
+        .info-row {
+            margin-bottom: 5px;
+        }
+
+        .info-label {
+            font-weight: bold;
+            display: inline-block;
+            width: 100px;
+        }
+
+        a.link-icon {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            text-decoration: none;
+            color: #0066cc;
+            font-weight: 500;
+        }
+
+        a.link-icon img {
+            width: 16px;
+            height: 16px;
+        }
+
+        .copy-button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0 5px;
+            vertical-align: middle;
+        }
+
+        .copy-button img {
+            width: 16px;
+            height: 16px;
+        }
+
+        .note {
+            font-size: 13px;
+            margin-top: 20px;
+            color: #666;
+        }
+
+        .form-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    align-items: flex-end;
+    margin-bottom: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 150px;
+}
+
+.form-group.topic {
+    flex: 2;
+}
+
+.form-group.search-btn {
+    flex: 0 0 auto;
+}
+
+.form-group label {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.form-group input[type="text"],
+.form-group select {
+    padding: 10px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    background-color: #fff;
+}
+
+.form-group button {
+    padding: 10px 15px;
+    background-color: #003366; /* Warna logo BPS */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+    </style>
+</head>
+<body>
+    <h1>🔍 Scraper Berita Topik Khusus</h1>
+
+    <form method="post">
+        <label>Topic*:</label>
+        <div class="search-row">
+            <input type="text" name="topic" placeholder="Ketik Disini... Contoh: Pertanian Bali..." required>
+            <button type="submit">
+                <img src="https://cdn-icons-png.flaticon.com/128/16019/16019946.png" alt="search icon">
+            </button>
+        </div>
+
+        <div class="select-row">
+            <div>
+                <label>Sentimen*:</label>
+                <select name="sentiment_type" required>
+                    <option value="produksi">Produksi</option>
+                    <option value="harga">Harga</option>
+                </select>
+            </div>
+
+            <div>
+                <label>Bulan:</label>
+                <select name="month">
+                    <option value="">-</option>
+                    <option>Januari</option><option>Februari</option><option>Maret</option>
+                    <option>April</option><option>Mei</option><option>Juni</option>
+                    <option>Juli</option><option>Agustus</option><option>September</option>
+                    <option>Oktober</option><option>November</option><option>Desember</option>
+                </select>
+            </div>
+
+            <div>
+                <label>Tahun:</label>
+                <select name="year">
+                    <option value="">-</option>
+                    {% for y in range(2000, 2026) %}
+                        <option>{{ y }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+    </form>
+
+    {% if keyword %}
+        <h2>📢 Hasil dari Topic : "{{ keyword }}"</h2>
+    {% endif %}
+
+    {% for news in news_data %}
+    <div class="card">
+        <h2>📰 {{ news.title }}</h2>
+        <div class="info-row"><span class="info-label">Topic:</span> {{ news.topic }}</div>
+        <div class="info-row"><span class="info-label">Tanggal:</span> {{ news.date }}</div>
+        <div class="info-row"><span class="info-label">Sentimen:</span> {{ news.sentiment_type }} - {{ news.sentiment }}</div>
+        <div class="info-row"><span class="info-label">Media:</span> {{ news.source }}</div>
+        <div class="info-row">
+            <span class="info-label">Link:</span>
+            <a href="{{ news.url }}" class="link-icon" id="link-{{ loop.index }}" target="_blank">
+                <img src="https://cdn-icons-png.flaticon.com/128/659/659999.png" alt="link icon">
+                Tautan
+            </a>
+            <button class="copy-button" onclick="copyToClipboard('link-{{ loop.index }}')" title="Salin Tautan">
+                <img src="https://cdn-icons-png.flaticon.com/128/1621/1621635.png" alt="copy icon">
+            </button>
+        </div>
+        <div class="info-row"><span class="info-label">Ringkasan:</span> {{ news.summary }}</div>
+    </div>
+    {% endfor %}
+
+    {% if keyword and not news_data %}
+        <p>❌ Tidak ditemukan berita untuk topik tersebut.</p>
+    {% endif %}
+
+
+    <script>
+        function copyToClipboard(elementId) {
+            const linkElement = document.getElementById(elementId);
+            const url = linkElement.href;
+            navigator.clipboard.writeText(url)
+                .then(() => {
+                    alert('Tautan berhasil disalin!');
+                })
+                .catch(err => {
+                    alert('Gagal menyalin tautan!');
+                    console.error(err);
+                });
+        }
+    </script>
+</body>
+</html>
